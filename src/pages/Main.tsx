@@ -26,8 +26,8 @@ export const Main = ({ cars }: { cars: Car[] }) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button component={Link} size="small" to={`/rent/${car.id}`}>
-                    Rent for one day!
+                <Button component={Link} to={`/rent/${car.id}`}>
+                    Rent now!
                 </Button>
             </CardActions>
         </Card>
