@@ -19,8 +19,12 @@ type Inputs = {
     name: string;
     phone: string;
     email: string;
-    startDate: string;
-    endDate: string;
+    startDate: Date | null;
+    endDate: Date | null;
+};
+
+const isValidDate = (date: Date | null) => {
+    return date instanceof Date && !isNaN(date.getTime());
 };
 
 export const Rent = ({ cars }: { cars: Car[] }) => {
@@ -28,9 +32,9 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
     const navigate = useNavigate();
     const [car, setCar] = useState<Car>();
 
-    const { control, handleSubmit } = useForm<Inputs>({ mode: 'onTouched' });
-
-    const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
+    const { control, setError, handleSubmit } = useForm<Inputs>({
+        mode: 'onTouched',
+    });
 
     useEffect(() => {
         if (!carId) {
@@ -46,6 +50,33 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         setCar(car);
     }, [cars, carId, navigate]);
 
+    const onSubmit: SubmitHandler<Inputs> = data => {
+        if (!data.startDate || !isValidDate(data.startDate)) {
+            setError('startDate', {});
+            return;
+        }
+
+        if (!data.endDate || !isValidDate(data.endDate)) {
+            setError('endDate', {});
+            return;
+        }
+
+        if (data.endDate.getTime() - data.startDate.getTime() < 0) {
+            setError('startDate', {});
+            setError('endDate', {});
+            return;
+        }
+
+        console.log({
+            carId: car?.id,
+            email: data.email,
+            endDate: data.endDate.toISOString(),
+            name: data.name,
+            phone: data.phone,
+            startDate: data.startDate.toISOString(),
+        })
+    };
+
     if (!car) {
         return null;
     }
@@ -58,6 +89,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
                 label="Phone"
                 control={control}
                 onlyNumbers={true}
+                minLength={9}
                 maxLength={9}
                 defaultValue=""
             />
@@ -66,6 +98,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
                 label="Email"
                 control={control}
                 defaultValue=""
+                pattern={/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i}
             />
             <DatePicker name="startDate" label="Start Date" control={control} />
             <DatePicker name="endDate" label="End Date" control={control} />

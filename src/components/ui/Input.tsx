@@ -1,4 +1,4 @@
-import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
+import { Controller, FieldValues, UseControllerProps, ValidationRule } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 
 type InputProps = {
@@ -8,6 +8,7 @@ type InputProps = {
     minLength?: number;
     maxLength?: number;
     onlyNumbers?: boolean;
+    pattern?: ValidationRule<RegExp>;
 };
 
 type Props<T extends FieldValues> = & UseControllerProps<T> & InputProps;
@@ -22,6 +23,7 @@ export const Input = <T extends FieldValues>(props: Props<T>) => {
                 required: props.required ?? true,
                 minLength: props.minLength ?? 3,
                 maxLength: props.maxLength ?? 100,
+                pattern: props.pattern,
             }}
             render={({ field, fieldState: { error } }) => {
                 return (

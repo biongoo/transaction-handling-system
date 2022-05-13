@@ -24,17 +24,11 @@ export const DatePicker = <T extends FieldValues>(props: Props<T>) => {
                     <DatePickerMUI
                         {...field}
                         label={props.label}
-                        /* onChange={(newValue: Date | null) => {
-                            if (!newValue) {
-                                return;
-                            }
-
-                            field.onChange(newValue);
-                        }} */
                         value={field.value || null}
                         renderInput={params => (
                             <TextField
                                 {...params}
+                                onBlur={field.onBlur}
                                 error={Boolean(error)}
                                 helperText={
                                     Boolean(error) &&
