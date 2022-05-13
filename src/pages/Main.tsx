@@ -10,7 +10,7 @@ import { Car } from '../types';
 
 export const Main = ({ cars }: { cars: Car[] }) => {
     const carsOutput = cars.map(car => (
-        <Card sx={{ maxWidth: 250 }} key={car.id}>
+        <Card sx={{ maxWidth: 250 }} key={car._id}>
             <CardMedia
                 component="img"
                 alt="green iguana"
@@ -26,7 +26,7 @@ export const Main = ({ cars }: { cars: Car[] }) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button component={Link} to={`/rent/${car.id}`}>
+                <Button component={Link} to={`/rent/${car._id}`}>
                     Rent now!
                 </Button>
             </CardActions>

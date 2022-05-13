@@ -36,7 +36,7 @@ export const Payment = ({ cars }: { cars: Car[] }) => {
             return navigate('/');
         }
 
-        const car = cars.find(car => car.id === +carId);
+        const car = cars.find(car => car._id === +carId);
 
         if (!car) {
             return navigate('/');
