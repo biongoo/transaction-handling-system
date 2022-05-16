@@ -99,7 +99,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         }
 
         mutation.mutate({
-            carId: car?._id,
+            carId: car._id,
             email: data.email,
             endDate: data.endDate.toISOString(),
             name: data.name,
