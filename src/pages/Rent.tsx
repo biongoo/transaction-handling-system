@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Car } from '../types';
+import { useMutation } from 'react-query';
+import { Car } from 'types';
 import { useParams, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Input, DatePicker } from 'components';
+import { postData } from 'api';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
@@ -21,6 +23,15 @@ type Inputs = {
     email: string;
     startDate: Date | null;
     endDate: Date | null;
+};
+
+type Data = {
+    carId: number;
+    name: string;
+    phone: string;
+    email: string;
+    startDate: string;
+    endDate: string;
 };
 
 const isValidDate = (date: Date | null) => {
@@ -50,8 +61,24 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         setCar(car);
     }, [cars, carId, navigate]);
 
+    const mutation = useMutation<{ id: number }, Error, Data>(
+        newOrder => postData('order', newOrder),
+        {
+            onSuccess: ({ id }) => {
+                console.log(id);
+            },
+        },
+    );
+
     const onSubmit: SubmitHandler<Inputs> = data => {
-        if (!data.startDate || !isValidDate(data.startDate)) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (
+            !data.startDate ||
+            !isValidDate(data.startDate) ||
+            data.startDate.getTime() < today.getTime()
+        ) {
             setError('startDate', {});
             return;
         }
@@ -67,14 +94,18 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
             return;
         }
 
-        console.log({
+        if (!car) {
+            return;
+        }
+
+        mutation.mutate({
             carId: car?._id,
             email: data.email,
             endDate: data.endDate.toISOString(),
             name: data.name,
             phone: data.phone,
             startDate: data.startDate.toISOString(),
-        })
+        });
     };
 
     if (!car) {
@@ -98,7 +129,9 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
                 label="Email"
                 control={control}
                 defaultValue=""
-                pattern={/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i}
+                pattern={
+                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i
+                }
             />
             <DatePicker name="startDate" label="Start Date" control={control} />
             <DatePicker name="endDate" label="End Date" control={control} />

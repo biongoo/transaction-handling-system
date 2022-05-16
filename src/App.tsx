@@ -1,10 +1,13 @@
+import { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 import { Routes, Route } from 'react-router-dom';
-import { Main, Rent } from './pages';
 import CssBaseline from '@mui/material/CssBaseline';
-import styles from './App.module.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Car } from './types';
+import { Car } from 'types';
+import { getData } from 'api';
+import { Main, Rent } from 'pages';
+import { Loading } from 'components';
+import styles from './App.module.css';
 
 const theme = createTheme({
     palette: {
@@ -13,22 +16,27 @@ const theme = createTheme({
 });
 
 const App = () => {
-    const { isLoading, error, data } = useQuery<Car[], Error>('cars', () =>
-        fetch('http://localhost:8080/cars').then(res => res.json()),
+    const { isLoading, isError, error, data } = useQuery<Car[], Error>(
+        'cars',
+        () => getData('cars'),
     );
 
-    if (isLoading || !data) {
-        return null;
+    let content: ReactElement;
+
+    if (isLoading) {
+        content = <Loading />;
+    } else if (isError) {
+        content = <>{error.message}</>;
+    } else if (!data) {
+        content = <>Unknown error.</>;
+    } else {
+        content = (
+            <Routes>
+                <Route path="rent/:carId" element={<Rent cars={data} />} />
+                <Route path="*" element={<Main cars={data} />} />
+            </Routes>
+        );
     }
-
-    const content = error ? (
-        error.message
-    ) : (
-        <Routes>
-            <Route path="rent/:carId" element={<Rent cars={data} />} />
-            <Route path="*" element={<Main cars={data} />} />
-        </Routes>
-    );
 
     return (
         <ThemeProvider theme={theme}>
