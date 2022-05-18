@@ -1,3 +1,5 @@
+import { ApiError } from 'types';
+
 export const postData = async <T extends Object>(url: string, reqData: T) => {
     try {
         const response = await fetch(`http://localhost:8080/${url}`, {
@@ -10,16 +12,16 @@ export const postData = async <T extends Object>(url: string, reqData: T) => {
 
         const { data, error } = await response.json();
 
-        if (!response.ok || error) {
-            throw error;
+        if (error.name) {
+            throw new ApiError(error.name, error.message, error.inputName);
         }
 
         return data;
-    } catch (e) {
+    } catch (e: any) {
         if (typeof e === 'string') {
-            throw new Error(e);
-        } else if (e instanceof Error) {
-            throw new Error('Error while fetching.');
+            throw new ApiError('', 'Cannot connect with api.');
+        } else {
+            throw e;
         }
     }
 };

@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Car } from 'types';
+import { ApiError, Car } from 'types';
 import { getData } from 'api';
 import { Main, Rent } from 'pages';
 import { Loading } from 'components';
@@ -16,7 +16,7 @@ const theme = createTheme({
 });
 
 const App = () => {
-    const { isLoading, isError, error, data } = useQuery<Car[], Error>(
+    const { isLoading, isError, error, data } = useQuery<Car[], ApiError>(
         'cars',
         () => getData('cars'),
     );

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import { Car } from 'types';
+import { Car, ApiError } from 'types';
 import { useParams, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -42,6 +42,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
     const { carId } = useParams();
     const navigate = useNavigate();
     const [car, setCar] = useState<Car>();
+    const [errorMessage, setErrorMessage] = useState('');
 
     const { control, setError, handleSubmit } = useForm<Inputs>({
         mode: 'onTouched',
@@ -61,11 +62,18 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         setCar(car);
     }, [cars, carId, navigate]);
 
-    const mutation = useMutation<{ id: number }, Error, Data>(
+    const mutation = useMutation<{ id: number }, ApiError, Data>(
         newOrder => postData('order', newOrder),
         {
             onSuccess: ({ id }) => {
                 console.log(id);
+            },
+            onError: apiError => {
+                if (apiError.inputName) {
+                    setError(apiError.inputName as keyof Inputs, {});
+                }
+
+                setErrorMessage(apiError.message);
             },
         },
     );
@@ -167,6 +175,9 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
                     <Stack spacing={2} mt={2} direction="column">
                         {inputs}
                     </Stack>
+                    <Box mt={4} sx={{ color: '#f44336' }}>
+                        Error: {errorMessage}
+                    </Box>
                 </CardContent>
                 <CardActions>
                     <Button component={Link} to="/">
