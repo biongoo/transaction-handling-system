@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ApiError, Car } from 'types';
 import { getData } from 'api';
-import { Main, Rent } from 'pages';
+import { Main, Rent, Payment } from 'pages';
 import { Loading } from 'components';
 import styles from './App.module.css';
 
@@ -33,6 +33,7 @@ const App = () => {
         content = (
             <Routes>
                 <Route path="rent/:carId" element={<Rent cars={data} />} />
+                <Route path="payment/:paymentId" element={<Payment />} />
                 <Route path="*" element={<Main cars={data} />} />
             </Routes>
         );

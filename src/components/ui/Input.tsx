@@ -1,4 +1,9 @@
-import { Controller, FieldValues, UseControllerProps, ValidationRule } from 'react-hook-form';
+import {
+    Controller,
+    FieldValues,
+    UseControllerProps,
+    ValidationRule,
+} from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 
 type InputProps = {
@@ -9,9 +14,12 @@ type InputProps = {
     maxLength?: number;
     onlyNumbers?: boolean;
     pattern?: ValidationRule<RegExp>;
+    spacesBetween?: boolean;
+    sx?: {};
+    fullWidth?: boolean;
 };
 
-type Props<T extends FieldValues> = & UseControllerProps<T> & InputProps;
+type Props<T extends FieldValues> = UseControllerProps<T> & InputProps;
 
 export const Input = <T extends FieldValues>(props: Props<T>) => {
     return (
@@ -29,24 +37,32 @@ export const Input = <T extends FieldValues>(props: Props<T>) => {
                 return (
                     <TextField
                         {...field}
+                        sx={props.sx}
                         id={field.name}
                         label={props.label}
+                        fullWidth={props.fullWidth}
                         error={Boolean(error)}
-                        helperText={Boolean(error) && `${props.label} is invalid`}
+                        helperText={
+                            Boolean(error) && `${props.label} is invalid`
+                        }
                         onChange={x => {
-                            if (props.maxLength && x.target.value.length > props.maxLength) {
+                            let value = x.target.value;
+                            const { maxLength, onlyNumbers, spacesBetween } =
+                                props;
+
+                            if (maxLength && value.length > maxLength) {
                                 return;
                             }
 
-                            if (props.onlyNumbers) {
-                                return field.onChange(
-                                    allowOnlyNumber(
-                                        x.target.value
-                                    )
-                                );
+                            if (onlyNumbers) {
+                                value = allowOnlyNumber(value);
                             }
 
-                            return field.onChange(x.target.value);
+                            if (spacesBetween) {
+                                value = value.replace(/(.{4})/g, '$1 ').trim();
+                            }
+
+                            return field.onChange(value);
                         }}
                     />
                 );
