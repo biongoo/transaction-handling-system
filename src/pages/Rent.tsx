@@ -28,7 +28,7 @@ type Inputs = {
 type Data = {
     carId: number;
     name: string;
-    phone: string;
+    phone: number;
     email: string;
     startDate: string;
     endDate: string;
@@ -66,6 +66,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         newOrder => postData('order', newOrder),
         {
             onSuccess: ({ id }) => {
+                setErrorMessage('');
                 console.log(id);
             },
             onError: apiError => {
@@ -108,10 +109,10 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
 
         mutation.mutate({
             carId: car._id,
+            name: data.name,
             email: data.email,
             endDate: data.endDate.toISOString(),
-            name: data.name,
-            phone: data.phone,
+            phone: +data.phone,
             startDate: data.startDate.toISOString(),
         });
     };
@@ -146,6 +147,12 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         </LocalizationProvider>
     );
 
+    const errorContent = errorMessage ? (
+        <Box mt={4} sx={{ color: '#f44336' }}>
+            Error: {errorMessage}
+        </Box>
+    ) : null;
+
     return (
         <Box
             sx={{
@@ -161,7 +168,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
             <Card sx={{ minWidth: 275, width: { xs: '90%', md: '70%' } }}>
                 <CardMedia
                     component="img"
-                    alt="green iguana"
+                    alt={car.name}
                     height="400"
                     image={car.url}
                 />
@@ -175,9 +182,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
                     <Stack spacing={2} mt={2} direction="column">
                         {inputs}
                     </Stack>
-                    <Box mt={4} sx={{ color: '#f44336' }}>
-                        Error: {errorMessage}
-                    </Box>
+                    {errorContent}
                 </CardContent>
                 <CardActions>
                     <Button component={Link} to="/">

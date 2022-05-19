@@ -13,7 +13,7 @@ export const Main = ({ cars }: { cars: Car[] }) => {
         <Card sx={{ maxWidth: 250 }} key={car._id}>
             <CardMedia
                 component="img"
-                alt="green iguana"
+                alt={car.name}
                 height="140"
                 image={car.url}
             />
