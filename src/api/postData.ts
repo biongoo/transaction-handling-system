@@ -12,7 +12,7 @@ export const postData = async <T extends Object>(url: string, reqData: T) => {
 
         const { data, error } = await response.json();
 
-        if (error.message) {
+        if (error?.message) {
             throw new ApiError(error.message, error.inputName);
         }
 

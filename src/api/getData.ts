@@ -6,8 +6,7 @@ export const getData = async (url: string) => {
 
         const { data, error } = await response.json();
 
-        if (error.message) {
-            console.log(error);
+        if (error?.message) {
             throw new ApiError(error.message, error.inputName);
         }
 
