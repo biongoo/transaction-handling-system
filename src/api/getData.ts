@@ -6,14 +6,15 @@ export const getData = async (url: string) => {
 
         const { data, error } = await response.json();
 
-        if (error.name) {
-            throw new ApiError(error.name, error.message, error.inputName);
+        if (error.message) {
+            console.log(error);
+            throw new ApiError(error.message, error.inputName);
         }
 
         return data;
     } catch (e) {
         if (e instanceof Error) {
-            throw new ApiError('noConnect', 'Cannot connect with api.');
+            throw new ApiError('Cannot connect with api.');
         } else {
             throw e;
         }

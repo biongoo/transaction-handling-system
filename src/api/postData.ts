@@ -12,14 +12,14 @@ export const postData = async <T extends Object>(url: string, reqData: T) => {
 
         const { data, error } = await response.json();
 
-        if (error.name) {
-            throw new ApiError(error.name, error.message, error.inputName);
+        if (error.message) {
+            throw new ApiError(error.message, error.inputName);
         }
 
         return data;
     } catch (e: any) {
-        if (typeof e === 'string') {
-            throw new ApiError('', 'Cannot connect with api.');
+        if (e instanceof Error) {
+            throw new ApiError('Cannot connect with api.');
         } else {
             throw e;
         }
