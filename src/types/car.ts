@@ -1,5 +1,5 @@
 export type Car = {
-    _id: number;
+    _id: string;
     name: string,
     pricePerDay: number;
     url: string;

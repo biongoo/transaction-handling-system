@@ -26,7 +26,7 @@ type Inputs = {
 };
 
 type Data = {
-    carId: number;
+    carId: string;
     name: string;
     phone: number;
     email: string;
@@ -53,7 +53,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
             return navigate('/');
         }
 
-        const car = cars.find(car => car._id === +carId);
+        const car = cars.find(car => car._id === carId);
 
         if (!car) {
             return navigate('/');
