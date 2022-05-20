@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Input } from 'components';
+import { Input, Loading } from 'components';
+import { Payment as PaymentType, ApiError } from 'types';
+import { getData } from 'api';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -21,19 +24,30 @@ export const Payment = () => {
     const { paymentId } = useParams();
     const navigate = useNavigate();
 
-    const { control, handleSubmit } = useForm<Inputs>({ mode: 'onTouched' });
-
-    const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
-
     useEffect(() => {
         if (!paymentId) {
             return navigate('/');
         }
     }, [paymentId, navigate]);
 
-    /* if (!paymentDetails) {
-        return null;
-    } */
+    const { control, handleSubmit } = useForm<Inputs>({ mode: 'onTouched' });
+
+    const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
+
+    const { isLoading, isError /* data */ } = useQuery<PaymentType, ApiError>(
+        'payment',
+        () => getData(`payment/${paymentId}`),
+    );
+
+    useEffect(() => {
+        if (isError) {
+            return navigate('/');
+        }
+    }, [isError, navigate]);
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return (
         <Box
@@ -96,15 +110,15 @@ export const Payment = () => {
                             label="Cardholder Name"
                             control={control}
                             defaultValue=""
-                            pattern={/^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)/}
+                            pattern={
+                                /^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)/
+                            }
                             fullWidth={true}
                         />
                     </Stack>
                 </CardContent>
                 <CardActions>
-                    <Button type="submit">
-                        Order
-                    </Button>
+                    <Button type="submit">Order</Button>
                 </CardActions>
             </Card>
         </Box>

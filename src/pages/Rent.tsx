@@ -44,10 +44,6 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
     const [car, setCar] = useState<Car>();
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { control, setError, handleSubmit } = useForm<Inputs>({
-        mode: 'onTouched',
-    });
-
     useEffect(() => {
         if (!carId) {
             return navigate('/');
@@ -62,12 +58,17 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         setCar(car);
     }, [cars, carId, navigate]);
 
-    const mutation = useMutation<{ id: number }, ApiError, Data>(
+    const { control, setError, handleSubmit } = useForm<Inputs>({
+        mode: 'onTouched',
+    });
+
+    const mutation = useMutation<{ paymentId: string }, ApiError, Data>(
         newOrder => postData('order', newOrder),
-        {
-            onSuccess: ({ id }) => {
+        {   onMutate: () => {
                 setErrorMessage('');
-                console.log(id);
+            },
+            onSuccess: ({ paymentId }) => {
+                return navigate(`/payment/${paymentId}`);
             },
             onError: apiError => {
                 if (apiError.inputName) {
