@@ -64,7 +64,8 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
 
     const mutation = useMutation<{ paymentId: string }, ApiError, Data>(
         newOrder => postData('order', newOrder),
-        {   onMutate: () => {
+        {   
+            onMutate: () => {
                 setErrorMessage('');
             },
             onSuccess: ({ paymentId }) => {
@@ -84,6 +85,10 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        if (!car) {
+            return;
+        }
+
         if (
             !data.startDate ||
             !isValidDate(data.startDate) ||
@@ -101,10 +106,6 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
         if (data.endDate.getTime() - data.startDate.getTime() < 0) {
             setError('startDate', {});
             setError('endDate', {});
-            return;
-        }
-
-        if (!car) {
             return;
         }
 
