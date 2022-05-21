@@ -1,9 +1,7 @@
-import { Car } from '.';
-
 export type Payment = {
+    _id: string;
     status: 'new' | 'paid';
     value: number;
     days: number;
-    orderId: number;
-    car: Car;
+    carName: string;
 };

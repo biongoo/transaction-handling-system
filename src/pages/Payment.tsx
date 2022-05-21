@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { getData } from 'api';
 import { Input, Loading } from 'components';
 import { Payment as PaymentType, ApiError } from 'types';
-import { getData } from 'api';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -17,7 +17,8 @@ import Stack from '@mui/material/Stack';
 type Inputs = {
     card: string;
     cvc: string;
-    name: string;
+    mm: string;
+    yy: string;
 };
 
 export const Payment = () => {
@@ -32,12 +33,14 @@ export const Payment = () => {
 
     const { control, handleSubmit } = useForm<Inputs>({ mode: 'onTouched' });
 
-    const onSubmit: SubmitHandler<Inputs> = data => console.log(data);
-
-    const { isLoading, isError /* data */ } = useQuery<PaymentType, ApiError>(
+    const { isLoading, isError, data } = useQuery<PaymentType, ApiError>(
         'payment',
         () => getData(`payment/${paymentId}`),
     );
+
+    const onSubmit: SubmitHandler<Inputs> = data => {
+        console.log(data);
+    };
 
     useEffect(() => {
         if (isError) {
@@ -47,6 +50,10 @@ export const Payment = () => {
 
     if (isLoading) {
         return <Loading />;
+    }
+
+    if (!data) {
+        return null;
     }
 
     return (
@@ -66,28 +73,49 @@ export const Payment = () => {
             <Card sx={{ minWidth: 275, width: '70%' }}>
                 <CardHeader
                     title="Payment details"
-                    /* subheader={`${car.name} - 1 Day - ${car.pricePerDay} PLN`} */
+                    subheader={`${data.carName} - ${data.days} days - ${data.value} PLN`}
                 />
                 <CardContent>
                     <Stack spacing={2} direction="column">
+                        <Input
+                            name="card"
+                            label="Card Number"
+                            control={control}
+                            onlyNumbers={true}
+                            minLength={19}
+                            maxLength={19}
+                            defaultValue=""
+                            spacesBetween={true}
+                        />
                         <Stack
                             justifyContent="space-between"
-                            spacing={2}
+                            spacing={1}
                             direction={{
                                 xs: 'column',
                                 md: 'row',
                             }}
                         >
                             <Input
-                                name="card"
-                                label="Card Number"
+                                name="mm"
+                                label="Month Shortcut"
                                 control={control}
                                 onlyNumbers={true}
-                                minLength={19}
-                                maxLength={19}
+                                minLength={2}
+                                maxLength={2}
                                 defaultValue=""
                                 sx={{ flexGrow: 1 }}
-                                spacesBetween={true}
+                                pattern={/0[1-9]|1[0-2]/}
+                            />
+                            <Input
+                                name="yy"
+                                label="Year Shortcut"
+                                control={control}
+                                onlyNumbers={true}
+                                minLength={2}
+                                maxLength={2}
+                                defaultValue=""
+                                sx={{ flexGrow: 1 }}
+                                pattern={/^(0?[1-9]|[1-9][0-9])$/}
                             />
                             <Input
                                 name="cvc"
@@ -97,27 +125,15 @@ export const Payment = () => {
                                 minLength={3}
                                 maxLength={3}
                                 defaultValue=""
-                                sx={{
-                                    maxWidth: {
-                                        xs: 'none',
-                                        md: 150,
-                                    },
-                                }}
+                                sx={{ flexGrow: 1 }}
                             />
                         </Stack>
-                        <Input
-                            name="name"
-                            label="Cardholder Name"
-                            control={control}
-                            defaultValue=""
-                            pattern={
-                                /^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)/
-                            }
-                            fullWidth={true}
-                        />
                     </Stack>
                 </CardContent>
                 <CardActions>
+                    <Button component={Link} to="/">
+                        Back
+                    </Button>
                     <Button type="submit">Order</Button>
                 </CardActions>
             </Card>
