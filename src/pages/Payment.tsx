@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
+import { useQuery, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { useParams, Link } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -21,9 +21,18 @@ type Inputs = {
     yy: string;
 };
 
+type Data = {
+    orderId: string;
+    card: number;
+    cvc: number;
+    mm: number;
+    yy: number;
+};
+
 export const Payment = () => {
     const { paymentId } = useParams();
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (!paymentId) {
@@ -31,15 +40,51 @@ export const Payment = () => {
         }
     }, [paymentId, navigate]);
 
-    const { control, handleSubmit } = useForm<Inputs>({ mode: 'onTouched' });
+    const { control, handleSubmit, setError } = useForm<Inputs>({
+        mode: 'onTouched',
+    });
 
     const { isLoading, isError, data } = useQuery<PaymentType, ApiError>(
         'payment',
         () => connectApi({ endpoint: `payment/${paymentId}` }),
     );
 
-    const onSubmit: SubmitHandler<Inputs> = data => {
-        console.log(data);
+    console.log(data);
+
+    const payment = useMutation<
+        { status: boolean; paymentId: string },
+        ApiError,
+        Data
+    >(newOrder => connectApi({ endpoint: 'order', reqData: newOrder }), {
+        onMutate: () => {
+            setErrorMessage('');
+        },
+        onSuccess: ({ paymentId }) => {
+            return navigate(`/payment/${paymentId}/status`);
+        },
+        onError: apiError => {
+            if (apiError.inputName) {
+                setError(apiError.inputName as keyof Inputs, {});
+            }
+
+            setErrorMessage(apiError.message);
+        },
+    });
+
+    const onSubmit: SubmitHandler<Inputs> = submitData => {
+        const card = +submitData.card.split(' ').join('');
+
+        if (!data?._id) {
+            return;
+        }
+
+        payment.mutate({
+            orderId: data._id,
+            card,
+            cvc: +submitData.cvc,
+            mm: +submitData.mm,
+            yy: +submitData.yy,
+        });
     };
 
     useEffect(() => {
@@ -55,6 +100,12 @@ export const Payment = () => {
     if (!data) {
         return null;
     }
+
+    const errorContent = errorMessage ? (
+        <Box mt={4} sx={{ color: '#f44336' }}>
+            Error: {errorMessage}
+        </Box>
+    ) : null;
 
     return (
         <Box
@@ -89,7 +140,7 @@ export const Payment = () => {
                         />
                         <Stack
                             justifyContent="space-between"
-                            spacing={1}
+                            spacing={2}
                             direction={{
                                 xs: 'column',
                                 md: 'row',
@@ -128,6 +179,7 @@ export const Payment = () => {
                                 sx={{ flexGrow: 1 }}
                             />
                         </Stack>
+                        {errorContent}
                     </Stack>
                 </CardContent>
                 <CardActions>
