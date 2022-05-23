@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { useParams, Link } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { getData } from 'api';
+import { connectApi } from 'api';
 import { Input, Loading } from 'components';
 import { Payment as PaymentType, ApiError } from 'types';
 import Box from '@mui/material/Box';
@@ -35,7 +35,7 @@ export const Payment = () => {
 
     const { isLoading, isError, data } = useQuery<PaymentType, ApiError>(
         'payment',
-        () => getData(`payment/${paymentId}`),
+        () => connectApi({ endpoint: `payment/${paymentId}` }),
     );
 
     const onSubmit: SubmitHandler<Inputs> = data => {

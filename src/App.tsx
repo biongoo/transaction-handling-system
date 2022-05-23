@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ApiError, Car } from 'types';
-import { getData } from 'api';
+import { connectApi } from 'api';
 import { Main, Rent, Payment } from 'pages';
 import { Loading } from 'components';
 import styles from './App.module.css';
@@ -18,7 +18,7 @@ const theme = createTheme({
 const App = () => {
     const { isLoading, isError, error, data } = useQuery<Car[], ApiError>(
         'cars',
-        () => getData('cars'),
+        () => connectApi({ endpoint: 'cars' }),
     );
 
     let content: ReactElement;

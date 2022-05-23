@@ -5,7 +5,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Input, DatePicker } from 'components';
-import { postData } from 'api';
+import { connectApi } from 'api';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
@@ -63,8 +63,8 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
     });
 
     const mutation = useMutation<{ paymentId: string }, ApiError, Data>(
-        newOrder => postData('order', newOrder),
-        {   
+        newOrder => connectApi({ endpoint: 'order', reqData: newOrder }),
+        {
             onMutate: () => {
                 setErrorMessage('');
             },

@@ -1,2 +1,1 @@
-export * from './getData';
-export * from './postData';
+export * from './connectApi';
