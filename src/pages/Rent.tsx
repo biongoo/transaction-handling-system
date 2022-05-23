@@ -63,7 +63,7 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
     });
 
     const mutation = useMutation<{ paymentId: string }, ApiError, Data>(
-        newOrder => connectApi({ endpoint: 'order', reqData: newOrder }),
+        newOrder => connectApi({ endpoint: 'order', reqData: newOrder, method: 'POST' }),
         {
             onMutate: () => {
                 setErrorMessage('');
