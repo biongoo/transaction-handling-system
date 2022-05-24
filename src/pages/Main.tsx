@@ -33,6 +33,8 @@ export const Main = ({ cars }: { cars: Car[] }) => {
         </Card>
     ));
 
+    const content = carsOutput.length ? carsOutput : 'No car has been added yet.';
+
     return (
         <Box
             sx={{
@@ -43,7 +45,7 @@ export const Main = ({ cars }: { cars: Car[] }) => {
                 gap: 3,
             }}
         >
-            {carsOutput}
+            {content}
         </Box>
     );
 };

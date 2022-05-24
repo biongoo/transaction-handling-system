@@ -14,7 +14,6 @@ import { Input } from 'components';
 import { ApiError, Payment } from 'types';
 
 type Request = {
-    orderId: string;
     card: number;
     cvc: number;
     mm: number;
@@ -38,14 +37,21 @@ export const NewPayment = () => {
         mode: 'onTouched',
     });
 
-    const { mutate } = useMutation<void, ApiError, Request>(
-        payment => connectApi({ endpoint: 'payment', reqData: payment, method: 'POST' }),
+    const { mutate } = useMutation<{ status: string }, ApiError, Request>(
+        data =>
+            connectApi({
+                endpoint: `payment/${payment._id}`,
+                method: 'PATCH',
+                reqData: data,
+            }),
         {
             onMutate: () => {
                 setErrorMessage('');
             },
-            onSuccess: () => {
-                queryClient.invalidateQueries('payment');
+            onSuccess: ({ status }) => {
+                if (status === 'ok') {
+                    queryClient.invalidateQueries('payment');
+                }
             },
             onError: apiError => {
                 if (apiError.inputName) {
@@ -67,26 +73,21 @@ export const NewPayment = () => {
 
         const now = new Date();
         const yearFromYY = +`20${yy}`;
+        const parsedMM = parseInt(mm, 10);
 
-        if (now.getFullYear() > yearFromYY) {
-            setError('yy', {});
-            setErrorMessage('Your card is expired!');
-            return;
-        }
-
-        if (now.getFullYear() === yearFromYY && now.getMonth() + 1 >= parseInt(mm, 10)) {
-            setError('mm', {});
-            setError('yy', {});
+        if (
+            now.getFullYear() > yearFromYY ||
+            (now.getFullYear() === yearFromYY && now.getMonth() + 1 >= parsedMM)
+        ) {
             setErrorMessage('Your card is expired!');
             return;
         }
 
         mutate({
-            orderId: payment._id,
             card,
             cvc: +cvc,
-            mm: +mm,
-            yy: +yy,
+            mm: parsedMM,
+            yy: yearFromYY,
         });
     };
 

@@ -1,8 +1,7 @@
 import { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 import { Routes, Route } from 'react-router-dom';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Box, CssBaseline, createTheme, ThemeProvider } from '@mui/material';
 import { ApiError, Car } from 'types';
 import { connectApi } from 'api';
 import { Main, Rent, Payment } from 'pages';
@@ -26,7 +25,19 @@ const App = () => {
     if (isLoading) {
         content = <Loading />;
     } else if (isError) {
-        content = <>{error.message}</>;
+        content = (
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    gap: 3,
+                }}
+            >
+                {error.message}
+            </Box>
+        );
     } else if (!data) {
         content = <>Unknown error.</>;
     } else {
