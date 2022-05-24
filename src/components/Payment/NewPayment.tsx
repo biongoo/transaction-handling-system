@@ -113,7 +113,7 @@ export const NewPayment = () => {
         >
             <Card sx={{ minWidth: 275, width: '70%' }}>
                 <CardHeader
-                    title="Payment details"
+                    title={`Transaction with id: ${payment._id}`}
                     subheader={`${payment.carName} - ${payment.days} days - ${payment.value} PLN`}
                 />
                 <CardContent>

@@ -16,7 +16,8 @@ export const PaidPayment = () => {
                 gap: 3,
             }}
         >
-            Congratulations! You rented {payment.carName}.
+            Congratulations! Your transaction with id "{payment._id}" was paid.
+            You rented {payment.carName}.
         </Box>
     );
 };
