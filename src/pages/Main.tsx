@@ -26,14 +26,19 @@ export const Main = ({ cars }: { cars: Car[] }) => {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button component={Link} to={`/rent/${car._id}`}>
+                <Button
+                    component={Link}
+                    to={`/rent/${car._id}`}
+                >
                     Rent now!
                 </Button>
             </CardActions>
         </Card>
     ));
 
-    const content = carsOutput.length ? carsOutput : 'No car has been added yet.';
+    const content = carsOutput.length
+        ? carsOutput
+        : 'No car has been added yet.';
 
     return (
         <Box

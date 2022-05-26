@@ -59,7 +59,7 @@ export const Input = <T extends FieldValues>(props: Props<T>) => {
                             }
 
                             if (spacesBetween) {
-                                value = value.replace(/(.{4})/g, '$1 ').trim();
+                                value = allowOnlyNumber(value).replace(/(.{4})/g, '$1 ').trim();
                             }
 
                             return field.onChange(value);
