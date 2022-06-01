@@ -6,9 +6,6 @@ import { Loading, PaidPayment } from 'components';
 import { NewPayment } from 'components';
 import { Payment as PaymentType, ApiError } from 'types';
 
-
-
-
 export const Payment = () => {
     const navigate = useNavigate();
     const { paymentId } = useParams();
