@@ -6,37 +6,37 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ApiError, Payment as PaymentType } from 'types';
 
 export const Payment = () => {
-    const navigate = useNavigate();
-    const { paymentId } = useParams();
+  const navigate = useNavigate();
+  const { paymentId } = useParams();
 
-    useEffect(() => {
-        if (!paymentId) {
-            return navigate('/');
-        }
-    }, [paymentId, navigate]);
-
-    const { isLoading, isError, data } = useQuery<PaymentType, ApiError>(
-        ['payment'],
-        () => connectApi({ endpoint: `payment/${paymentId}` }),
-    );
-
-    useEffect(() => {
-        if (isError) {
-            return navigate('/');
-        }
-    }, [isError, navigate]);
-
-    if (isLoading) {
-        return <Loading />;
+  useEffect(() => {
+    if (!paymentId) {
+      return navigate('/');
     }
+  }, [paymentId, navigate]);
 
-    if (data?.status === 'new') {
-        return <NewPayment />;
+  const { isLoading, isError, data } = useQuery<PaymentType, ApiError>(
+    ['payment'],
+    () => connectApi({ endpoint: `payment/${paymentId}` })
+  );
+
+  useEffect(() => {
+    if (isError) {
+      return navigate('/');
     }
+  }, [isError, navigate]);
 
-    if (data?.status === 'paid') {
-        return <PaidPayment />;
-    }
+  if (isLoading) {
+    return <Loading />;
+  }
 
-    return <Navigate to="/" />;
+  if (data?.status === 'new') {
+    return <NewPayment />;
+  }
+
+  if (data?.status === 'paid') {
+    return <PaidPayment />;
+  }
+
+  return <Navigate to="/" />;
 };

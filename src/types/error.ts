@@ -1,9 +1,9 @@
 export class ApiError {
-    message: string;
-    inputName?: string;
+  message: string;
+  inputName?: string;
 
-    constructor(message: string, inputName?: string) {
-        this.message = message;
-        this.inputName = inputName;
-    }
-};
+  constructor(message: string, inputName?: string) {
+    this.message = message;
+    this.inputName = inputName;
+  }
+}
