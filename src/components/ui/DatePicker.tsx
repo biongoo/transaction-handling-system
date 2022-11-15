@@ -1,6 +1,6 @@
 import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 import DatePickerMUI from '@mui/lab/DatePicker';
-import TextField from '@mui/material/TextField';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
 
 type DatePickerProps = {
     name: string;
@@ -25,7 +25,7 @@ export const DatePicker = <T extends FieldValues>(props: Props<T>) => {
                         {...field}
                         label={props.label}
                         value={field.value || null}
-                        renderInput={params => (
+                        renderInput={(params: JSX.IntrinsicAttributes & TextFieldProps) => (
                             <TextField
                                 {...params}
                                 onBlur={field.onBlur}

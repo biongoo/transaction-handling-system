@@ -37,7 +37,7 @@ type WrapperProps = {
     name: keyof Inputs;
     label: string;
     required?: boolean;
-    defaultValue?: string;
+    defaultValue?: Date;
 };
 
 const Wrapper = (props: WrapperProps) => {
@@ -50,7 +50,7 @@ const Wrapper = (props: WrapperProps) => {
             <DatePicker
                 control={control}
                 {...props}
-                defaultValue={props.defaultValue ?? ''}
+                defaultValue={props.defaultValue}
             />
         </LocalizationProvider>
     );

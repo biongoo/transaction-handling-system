@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { connectApi } from 'api';
 import { Input } from 'components';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { ApiError, Payment } from 'types';
 
 type Request = {
@@ -50,7 +50,7 @@ export const NewPayment = () => {
             },
             onSuccess: ({ status }) => {
                 if (status === 'ok') {
-                    queryClient.invalidateQueries('payment');
+                    queryClient.invalidateQueries({ queryKey: ['payment'] });
                 }
             },
             onError: apiError => {

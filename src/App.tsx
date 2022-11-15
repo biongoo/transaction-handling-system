@@ -1,11 +1,11 @@
-import { ReactElement } from 'react';
-import { useQuery } from 'react-query';
-import { Routes, Route } from 'react-router-dom';
-import { Box, CssBaseline, createTheme, ThemeProvider } from '@mui/material';
-import { ApiError, Car } from 'types';
+import { Box, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { connectApi } from 'api';
-import { Main, Rent, Payment } from 'pages';
 import { Loading } from 'components';
+import { Main, Payment, Rent } from 'pages';
+import { ReactElement } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { ApiError, Car } from 'types';
 import styles from './App.module.css';
 
 const theme = createTheme({
@@ -16,7 +16,7 @@ const theme = createTheme({
 
 const App = () => {
     const { isLoading, isError, error, data } = useQuery<Car[], ApiError>(
-        'cars',
+        ['cars'],
         () => connectApi({ endpoint: 'cars' }),
     );
 

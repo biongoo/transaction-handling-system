@@ -1,21 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useMutation } from 'react-query';
-import { Car, ApiError } from 'types';
-import { useParams, Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { Input, DatePicker } from 'components';
-import { connectApi } from 'api';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import CardMedia from '@mui/material/CardMedia';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { useMutation } from '@tanstack/react-query';
+import { connectApi } from 'api';
+import { DatePicker, Input } from 'components';
+import { useEffect, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ApiError, Car } from 'types';
 
 type Inputs = {
     name: string;
@@ -63,7 +62,12 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
     });
 
     const mutation = useMutation<{ paymentId: string }, ApiError, Data>(
-        newOrder => connectApi({ endpoint: 'order', reqData: newOrder, method: 'POST' }),
+        newOrder =>
+            connectApi({
+                endpoint: 'order',
+                reqData: newOrder,
+                method: 'POST',
+            }),
         {
             onMutate: () => {
                 setErrorMessage('');

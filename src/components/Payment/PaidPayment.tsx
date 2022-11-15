@@ -1,6 +1,6 @@
-import { Payment } from 'types';
-import { useQueryClient } from 'react-query';
 import { Box } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { Payment } from 'types';
 
 export const PaidPayment = () => {
     const queryClient = useQueryClient();

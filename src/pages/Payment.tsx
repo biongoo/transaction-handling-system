@@ -1,15 +1,14 @@
-import { useEffect } from 'react';
-import { useQuery } from 'react-query';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { connectApi } from 'api';
-import { Loading, PaidPayment } from 'components';
-import { NewPayment } from 'components';
-import { Payment as PaymentType, ApiError } from 'types';
+import { Loading, NewPayment, PaidPayment } from 'components';
+import { useEffect } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { ApiError, Payment as PaymentType } from 'types';
 
 export const Payment = () => {
     const navigate = useNavigate();
     const { paymentId } = useParams();
-    
+
     useEffect(() => {
         if (!paymentId) {
             return navigate('/');
@@ -17,7 +16,7 @@ export const Payment = () => {
     }, [paymentId, navigate]);
 
     const { isLoading, isError, data } = useQuery<PaymentType, ApiError>(
-        'payment',
+        ['payment'],
         () => connectApi({ endpoint: `payment/${paymentId}` }),
     );
 
@@ -36,7 +35,7 @@ export const Payment = () => {
     }
 
     if (data?.status === 'paid') {
-        return <PaidPayment />
+        return <PaidPayment />;
     }
 
     return <Navigate to="/" />;
