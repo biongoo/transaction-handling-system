@@ -1,5 +1,5 @@
 import { ErrorPage, LogIn, Main, SignUp } from 'pages';
-import { AuthLayout } from 'partials';
+import { AppLayout, AuthLayout } from 'partials';
 import { createBrowserRouter, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from 'stores';
 
@@ -28,8 +28,14 @@ const AuthProvider = (props: AuthProviderProps) => {
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Main />,
     errorElement: <ErrorPage />,
+    element: <AppLayout />,
+    children: [
+      {
+        index: true,
+        element: <Main />,
+      },
+    ],
   },
   {
     path: '/auth',
