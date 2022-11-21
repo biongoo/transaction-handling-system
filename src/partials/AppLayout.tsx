@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-//import { useAuthStore } from 'stores';
+import { useAuthStore } from 'stores';
 
 const drawerWidth = 240;
 
@@ -24,17 +24,31 @@ const guessItems = [
     name: 'Home',
     url: '/',
   },
-  {
-    name: 'Test',
-    url: '/test',
-  },
-] as const;
+];
 
 export const AppLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  //const user = useAuthStore((store) => store.user);
+  const user = useAuthStore((store) => store.user);
 
   const content = [...guessItems];
+
+  if (!user) {
+    content.push(
+      {
+        name: 'Login',
+        url: '/auth/login',
+      },
+      {
+        name: 'Sign Up',
+        url: '/auth/signup',
+      }
+    );
+  } else {
+    content.push({
+      name: 'Log out',
+      url: '/auth/logout',
+    });
+  }
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

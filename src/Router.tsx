@@ -1,4 +1,4 @@
-import { ErrorPage, LogIn, Main, SignUp } from 'pages';
+import { ErrorPage, LogIn, Logout, Main, SignUp } from 'pages';
 import { AppLayout, AuthLayout } from 'partials';
 import { createBrowserRouter, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from 'stores';
@@ -39,20 +39,32 @@ export const router = createBrowserRouter([
   },
   {
     path: '/auth',
-    element: (
-      <AuthProvider shouldBeLoggedIn={false}>
-        <AuthLayout />
-      </AuthProvider>
-    ),
+    element: <AuthLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
         path: 'login',
-        element: <LogIn />,
+        element: (
+          <AuthProvider shouldBeLoggedIn={false}>
+            <LogIn />
+          </AuthProvider>
+        ),
       },
       {
         path: 'signup',
-        element: <SignUp />,
+        element: (
+          <AuthProvider shouldBeLoggedIn={false}>
+            <SignUp />
+          </AuthProvider>
+        ),
+      },
+      {
+        path: 'logout',
+        element: (
+          <AuthProvider shouldBeLoggedIn={true}>
+            <Logout />
+          </AuthProvider>
+        ),
       },
     ],
   },
