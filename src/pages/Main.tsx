@@ -6,9 +6,22 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { Car } from '../types';
+import { ApiError, Car } from '../types';
+import { useQuery } from '@tanstack/react-query';
+import { connectApi } from 'api';
+import { Loading } from 'components';
 
-export const Main = ({ cars }: { cars: Car[] }) => {
+export const Main = () => {
+  const { isInitialLoading, data } = useQuery<Car[], ApiError>(['cars'], () =>
+    connectApi({ endpoint: 'cars' })
+  );
+
+  if (isInitialLoading) {
+    return <Loading />;
+  }
+
+  const cars = data ?? [];
+
   const carsOutput = cars.map((car) => (
     <Card sx={{ maxWidth: 250 }} key={car._id}>
       <CardMedia component="img" alt={car.name} height="140" image={car.url} />

@@ -7,7 +7,7 @@ type ConnectApiProps<T> = Omit<RequestInit, 'url' | 'body'> & {
 
 export const connectApi = async <T>(props: ConnectApiProps<T>) => {
   try {
-    const response = await fetch(`http://localhost:8080/${props.endpoint}`, {
+    const response = await fetch(`http://localhost:8000/${props.endpoint}`, {
       method: props.method ?? 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -16,10 +16,10 @@ export const connectApi = async <T>(props: ConnectApiProps<T>) => {
       body: props.reqData ? JSON.stringify(props.reqData) : undefined,
     });
 
-    const { data, error } = await response.json();
+    const { data, error, message } = await response.json();
 
     if (!response.ok) {
-      throw new ApiError(error?.message, error.inputName);
+      throw new ApiError(error?.message ?? message, error?.inputName);
     }
 
     return data;

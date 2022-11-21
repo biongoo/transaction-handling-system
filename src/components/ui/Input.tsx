@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 type InputProps = {
   name: string;
   label: string;
+  type?: string;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
@@ -39,6 +40,7 @@ export const Input = <T extends FieldValues>(props: Props<T>) => {
             {...field}
             sx={props.sx}
             id={field.name}
+            type={props.type}
             label={props.label}
             fullWidth={props.fullWidth}
             error={Boolean(error)}
