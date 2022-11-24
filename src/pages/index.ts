@@ -5,3 +5,6 @@ export * from './Main';
 export * from './Payment';
 export * from './Rent';
 export * from './SignUp';
+export * from './Users';
+export * from './UsersAdd';
+export * from './UsersEdit';

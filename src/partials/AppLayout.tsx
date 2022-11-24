@@ -26,11 +26,22 @@ const guessItems = [
   },
 ];
 
+const adminItems = [
+  {
+    name: 'Users',
+    url: '/users',
+  },
+];
+
 export const AppLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const user = useAuthStore((store) => store.user);
 
   const content = [...guessItems];
+
+  if (user?.role === 'admin') {
+    content.push(...adminItems);
+  }
 
   if (!user) {
     content.push(
@@ -151,6 +162,8 @@ export const AppLayout = () => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
+          maxWidth: 1000,
+          margin: 'auto',
         }}
       >
         <Toolbar />
