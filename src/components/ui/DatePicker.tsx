@@ -1,6 +1,6 @@
-import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
-import DatePickerMUI from '@mui/lab/DatePicker';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
+import { DatePicker as DatePickerMUI } from '@mui/x-date-pickers';
+import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 
 type DatePickerProps = {
   name: string;

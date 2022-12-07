@@ -1,5 +1,3 @@
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -8,9 +6,11 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { useMutation } from '@tanstack/react-query';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { connectApi } from 'api';
-import { DatePicker, Input } from 'components';
+import { DatePicker, Input, Loading } from 'components';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -37,25 +37,32 @@ const isValidDate = (date: Date | null) => {
   return date instanceof Date && !Number.isNaN(date.getTime());
 };
 
-export const Rent = ({ cars }: { cars: Car[] }) => {
+export const Rent = () => {
   const { carId } = useParams();
   const navigate = useNavigate();
   const [car, setCar] = useState<Car>();
   const [errorMessage, setErrorMessage] = useState('');
+
+  const { isInitialLoading, data: cars } = useQuery<Car[], ApiError>(
+    ['cars'],
+    () => connectApi({ endpoint: 'cars' })
+  );
 
   useEffect(() => {
     if (!carId) {
       return navigate('/');
     }
 
-    const car = cars.find((car) => car._id === carId);
+    if (cars) {
+      const car = cars.find((car) => car._id === carId);
 
-    if (!car) {
-      return navigate('/');
+      if (!car) {
+        return navigate('/');
+      }
+
+      setCar(car);
     }
-
-    setCar(car);
-  }, [cars, carId, navigate]);
+  }, [cars, carId]);
 
   const { control, setError, handleSubmit } = useForm<Inputs>({
     mode: 'onTouched',
@@ -123,6 +130,10 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
     });
   };
 
+  if (isInitialLoading) {
+    return <Loading />;
+  }
+
   if (!car) {
     return null;
   }
@@ -185,6 +196,16 @@ export const Rent = ({ cars }: { cars: Car[] }) => {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Price per day: {car.pricePerDay} PLN
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Acceleration: {car.acceleration}s
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Engine type:{' '}
+            {car.engineType.at(0)?.toUpperCase() + car.engineType.slice(1)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Features: {car.features.map((x) => x.name).join(', ')}
           </Typography>
           <Stack spacing={2} mt={2} direction="column">
             {inputs}

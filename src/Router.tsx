@@ -8,6 +8,8 @@ import {
   ManageCarsAdd,
   ManageCarsEdit,
   ManageOrders,
+  Payment,
+  Rent,
   SignUp,
   Users,
   UsersAdd,
@@ -133,6 +135,34 @@ export const router = createBrowserRouter([
           {
             path: ':id/edit',
             element: <ManageCarsEdit />,
+          },
+        ],
+      },
+      {
+        path: 'rent',
+        element: (
+          <AuthProvider shouldBeLoggedIn={true}>
+            <Outlet />
+          </AuthProvider>
+        ),
+        children: [
+          {
+            path: ':carId',
+            element: <Rent />,
+          },
+        ],
+      },
+      {
+        path: 'payment',
+        element: (
+          <AuthProvider shouldBeLoggedIn={true}>
+            <Outlet />
+          </AuthProvider>
+        ),
+        children: [
+          {
+            path: ':paymentId',
+            element: <Payment />,
           },
         ],
       },
