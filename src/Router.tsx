@@ -4,6 +4,10 @@ import {
   LogIn,
   Logout,
   Main,
+  ManageCars,
+  ManageCarsAdd,
+  ManageCarsEdit,
+  ManageOrders,
   SignUp,
   Users,
   UsersAdd,
@@ -79,6 +83,56 @@ export const router = createBrowserRouter([
           {
             path: ':id/edit',
             element: <UsersEdit />,
+          },
+        ],
+      },
+      {
+        path: 'manage-orders',
+        element: (
+          <AuthProvider
+            shouldBeLoggedIn={true}
+            expectedRole={UserRole.employee}
+          >
+            <Outlet />
+          </AuthProvider>
+        ),
+        children: [
+          {
+            index: true,
+            element: <ManageOrders />,
+          },
+          /* {
+            path: 'add',
+            element: <UsersAdd />,
+          },
+          {
+            path: ':id/edit',
+            element: <UsersEdit />,
+          }, */
+        ],
+      },
+      {
+        path: 'manage-cars',
+        element: (
+          <AuthProvider
+            shouldBeLoggedIn={true}
+            expectedRole={UserRole.employee}
+          >
+            <Outlet />
+          </AuthProvider>
+        ),
+        children: [
+          {
+            index: true,
+            element: <ManageCars />,
+          },
+          {
+            path: 'add',
+            element: <ManageCarsAdd />,
+          },
+          {
+            path: ':id/edit',
+            element: <ManageCarsEdit />,
           },
         ],
       },

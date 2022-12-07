@@ -13,6 +13,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
+import { UserRole } from 'enums';
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuthStore } from 'stores';
@@ -33,17 +34,35 @@ const adminItems = [
   },
 ];
 
+const employeeItems = [
+  {
+    name: 'Manage cars',
+    url: '/manage-cars',
+  },
+  {
+    name: 'Manage orders',
+    url: '/manage-orders',
+  },
+];
+
 export const AppLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const user = useAuthStore((store) => store.user);
 
   const content = [...guessItems];
 
-  if (user?.role === 'admin') {
-    content.push(...adminItems);
+  switch (user?.role) {
+    case UserRole.admin: {
+      content.push(...adminItems, ...employeeItems);
+      break;
+    }
+    case UserRole.employee: {
+      content.push(...employeeItems);
+      break;
+    }
   }
 
-  if (!user) {
+  if (user === undefined) {
     content.push(
       {
         name: 'Login',

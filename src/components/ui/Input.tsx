@@ -13,6 +13,7 @@ type InputProps = {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
+  onlyFloats?: boolean;
   onlyNumbers?: boolean;
   pattern?: ValidationRule<RegExp>;
   spacesBetween?: boolean;
@@ -47,7 +48,8 @@ export const Input = <T extends FieldValues>(props: Props<T>) => {
             helperText={Boolean(error) && `${props.label} is invalid`}
             onChange={(x) => {
               let value = x.target.value;
-              const { maxLength, onlyNumbers, spacesBetween } = props;
+              const { maxLength, onlyFloats, onlyNumbers, spacesBetween } =
+                props;
 
               if (maxLength && value.length > maxLength) {
                 return;
@@ -57,9 +59,13 @@ export const Input = <T extends FieldValues>(props: Props<T>) => {
                 value = allowOnlyNumber(value);
               }
 
+              if (onlyFloats) {
+                value = allowOnlyFloats(value);
+              }
+
               if (spacesBetween) {
                 value = allowOnlyNumber(value)
-                  .replace(/(.{4})/g, '$1 ')
+                  .replaceAll(/(.{4})/g, '$1 ')
                   .trim();
               }
 
@@ -73,5 +79,9 @@ export const Input = <T extends FieldValues>(props: Props<T>) => {
 };
 
 const allowOnlyNumber = (value: string) => {
-  return value.replace(/\D/g, '');
+  return value.replaceAll(/\D/g, '');
+};
+
+const allowOnlyFloats = (value: string) => {
+  return value.replaceAll(/[^\d.]/g, '');
 };
