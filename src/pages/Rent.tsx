@@ -14,12 +14,12 @@ import { DatePicker, Input, Loading } from 'components';
 import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useAuthStore } from 'stores';
 import { ApiError, Car } from 'types';
 
 type Inputs = {
   name: string;
   phone: string;
-  email: string;
   startDate: Date | null;
   endDate: Date | null;
 };
@@ -38,6 +38,7 @@ const isValidDate = (date: Date | null) => {
 };
 
 export const Rent = () => {
+  const user = useAuthStore((x) => x.user);
   const { carId } = useParams();
   const navigate = useNavigate();
   const [car, setCar] = useState<Car>();
@@ -123,7 +124,7 @@ export const Rent = () => {
     mutation.mutate({
       carId: car._id,
       name: data.name,
-      email: data.email,
+      email: user?.email ?? '',
       endDate: data.endDate.toISOString(),
       phone: +data.phone,
       startDate: data.startDate.toISOString(),
@@ -149,16 +150,6 @@ export const Rent = () => {
         minLength={9}
         maxLength={9}
         defaultValue=""
-      />
-      <Input
-        name="email"
-        label="Email"
-        control={control}
-        defaultValue=""
-        pattern={
-          // eslint-disable-next-line unicorn/better-regex, unicorn/no-unsafe-regex
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i
-        }
       />
       <DatePicker name="startDate" label="Start Date" control={control} />
       <DatePicker name="endDate" label="End Date" control={control} />

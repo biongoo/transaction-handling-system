@@ -7,7 +7,7 @@ import {
   ManageCars,
   ManageCarsAdd,
   ManageCarsEdit,
-  ManageOrders,
+  Orders,
   Payment,
   Rent,
   SignUp,
@@ -89,31 +89,6 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: 'manage-orders',
-        element: (
-          <AuthProvider
-            shouldBeLoggedIn={true}
-            expectedRole={UserRole.employee}
-          >
-            <Outlet />
-          </AuthProvider>
-        ),
-        children: [
-          {
-            index: true,
-            element: <ManageOrders />,
-          },
-          /* {
-            path: 'add',
-            element: <UsersAdd />,
-          },
-          {
-            path: ':id/edit',
-            element: <UsersEdit />,
-          }, */
-        ],
-      },
-      {
         path: 'manage-cars',
         element: (
           <AuthProvider
@@ -163,6 +138,20 @@ export const router = createBrowserRouter([
           {
             path: ':paymentId',
             element: <Payment />,
+          },
+        ],
+      },
+      {
+        path: 'orders',
+        element: (
+          <AuthProvider shouldBeLoggedIn={true}>
+            <Outlet />
+          </AuthProvider>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Orders />,
           },
         ],
       },

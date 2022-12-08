@@ -5,7 +5,7 @@ export * from './Main';
 export * from './ManageCars';
 export * from './ManageCarsAdd';
 export * from './ManageCarsEdit';
-export * from './ManageOrders';
+export * from './Orders';
 export * from './Payment';
 export * from './Rent';
 export * from './SignUp';

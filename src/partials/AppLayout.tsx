@@ -27,6 +27,13 @@ const guessItems = [
   },
 ];
 
+const userItems = [
+  {
+    name: 'Orders',
+    url: '/orders',
+  },
+];
+
 const adminItems = [
   {
     name: 'Users',
@@ -39,10 +46,6 @@ const employeeItems = [
     name: 'Manage cars',
     url: '/manage-cars',
   },
-  {
-    name: 'Manage orders',
-    url: '/manage-orders',
-  },
 ];
 
 export const AppLayout = () => {
@@ -53,11 +56,15 @@ export const AppLayout = () => {
 
   switch (user?.role) {
     case UserRole.admin: {
-      content.push(...adminItems, ...employeeItems);
+      content.push(...adminItems, ...employeeItems, ...userItems);
       break;
     }
     case UserRole.employee: {
-      content.push(...employeeItems);
+      content.push(...employeeItems, ...userItems);
+      break;
+    }
+    case UserRole.user: {
+      content.push(...userItems);
       break;
     }
   }
