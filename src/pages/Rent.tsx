@@ -33,6 +33,11 @@ type Data = {
   endDate: string;
 };
 
+type Availability = {
+  startDate: string;
+  endDate: string;
+};
+
 const isValidDate = (date: Date | null) => {
   return date instanceof Date && !Number.isNaN(date.getTime());
 };
@@ -44,8 +49,15 @@ export const Rent = () => {
   const [car, setCar] = useState<Car>();
   const [errorMessage, setErrorMessage] = useState('');
 
+  const { isInitialLoading: isInitialLoading2, data: availability } = useQuery<
+    Availability[],
+    ApiError
+  >(['availability'], () =>
+    connectApi({ endpoint: `cars/${carId ?? 0}/availability` })
+  );
+
   const { isInitialLoading, data: cars } = useQuery<Car[], ApiError>(
-    ['cars'],
+    ['cars', carId ?? 0],
     () => connectApi({ endpoint: 'cars' })
   );
 
@@ -65,9 +77,44 @@ export const Rent = () => {
     }
   }, [cars, carId]);
 
-  const { control, setError, handleSubmit } = useForm<Inputs>({
+  const { control, setError, handleSubmit, watch, setValue } = useForm<Inputs>({
     mode: 'onTouched',
   });
+
+  const startDate = watch('startDate');
+  const endDate = watch('endDate');
+
+  useEffect(() => {
+    if (!endDate || !startDate) {
+      return;
+    }
+
+    for (const x of availability ?? []) {
+      const start = new Date(x.startDate).getTime();
+      const end = new Date(x.endDate).getTime();
+
+      if (startDate.getTime() < start && endDate.getTime() > end) {
+        setValue('endDate', null);
+        return;
+      }
+    }
+  }, [startDate]);
+
+  useEffect(() => {
+    if (!endDate || !startDate) {
+      return;
+    }
+
+    for (const x of availability ?? []) {
+      const start = new Date(x.startDate).getTime();
+      const end = new Date(x.endDate).getTime();
+
+      if (startDate.getTime() < start && endDate.getTime() > end) {
+        setValue('startDate', null);
+        return;
+      }
+    }
+  }, [endDate]);
 
   const mutation = useMutation<{ paymentId: string }, ApiError, Data>(
     (newOrder) =>
@@ -131,13 +178,53 @@ export const Rent = () => {
     });
   };
 
-  if (isInitialLoading) {
+  const shouldDisableStart = (date: Date) => {
+    const time = date.getTime();
+
+    if (endDate && time > endDate.getTime()) {
+      return true;
+    }
+
+    for (const x of availability ?? []) {
+      const start = new Date(x.startDate).getTime();
+      const end = new Date(x.endDate).getTime();
+
+      if (time >= start && time <= end) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  const shouldDisableEnd = (date: Date) => {
+    const time = date.getTime();
+
+    if (startDate && time < startDate.getTime()) {
+      return true;
+    }
+
+    for (const x of availability ?? []) {
+      const start = new Date(x.startDate).getTime();
+      const end = new Date(x.endDate).getTime();
+
+      if (time >= start && time <= end) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  if (isInitialLoading || isInitialLoading2) {
     return <Loading />;
   }
 
   if (!car) {
     return null;
   }
+
+  const maxDate = new Date(new Date().setMonth(new Date().getMonth() + 3));
 
   const inputs = (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -151,8 +238,22 @@ export const Rent = () => {
         maxLength={9}
         defaultValue=""
       />
-      <DatePicker name="startDate" label="Start Date" control={control} />
-      <DatePicker name="endDate" label="End Date" control={control} />
+      <DatePicker
+        name="startDate"
+        label="Start Date"
+        control={control}
+        disablePast={true}
+        shouldDisableDate={shouldDisableStart}
+        maxDate={maxDate}
+      />
+      <DatePicker
+        name="endDate"
+        label="End Date"
+        control={control}
+        disablePast={true}
+        shouldDisableDate={shouldDisableEnd}
+        maxDate={maxDate}
+      />
     </LocalizationProvider>
   );
 

@@ -1,9 +1,12 @@
+import { Car } from './car';
+import { Payment } from './payment';
+
 export type Order = {
-  car: string;
+  car: Car;
   email: string;
   endDate: string;
   name: string;
-  payment: string;
+  payment: Payment;
   phone: number;
   startDate: number;
   user: string;

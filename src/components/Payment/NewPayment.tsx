@@ -10,7 +10,6 @@ import { connectApi } from 'api';
 import { Input } from 'components';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
 import { ApiError, Payment } from 'types';
 
 type Request = {
@@ -173,9 +172,6 @@ export const NewPayment = () => {
           </Stack>
         </CardContent>
         <CardActions>
-          <Button component={Link} to="/">
-            Back
-          </Button>
           <Button type="submit">Order</Button>
         </CardActions>
       </Card>

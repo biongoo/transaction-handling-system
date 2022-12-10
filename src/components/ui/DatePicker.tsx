@@ -5,7 +5,11 @@ import { Controller, FieldValues, UseControllerProps } from 'react-hook-form';
 type DatePickerProps = {
   name: string;
   label: string;
+  maxDate?: Date;
+  minDate?: Date;
   required?: boolean;
+  disablePast?: boolean;
+  shouldDisableDate?: (day: Date) => boolean;
 };
 
 type Props<T extends FieldValues> = UseControllerProps<T> & DatePickerProps;
@@ -25,6 +29,10 @@ export const DatePicker = <T extends FieldValues>(props: Props<T>) => {
             {...field}
             label={props.label}
             value={field.value || null}
+            disablePast={props.disablePast}
+            maxDate={props.maxDate}
+            minDate={props.minDate}
+            shouldDisableDate={props.shouldDisableDate}
             renderInput={(params: JSX.IntrinsicAttributes & TextFieldProps) => (
               <TextField
                 {...params}

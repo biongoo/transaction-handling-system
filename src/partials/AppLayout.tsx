@@ -188,7 +188,7 @@ export const AppLayout = () => {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          maxWidth: 1000,
+          maxWidth: 1100,
           margin: 'auto',
         }}
       >
