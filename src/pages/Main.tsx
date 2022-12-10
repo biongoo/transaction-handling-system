@@ -19,9 +19,8 @@ import {
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { connectApi } from 'api';
-import { Loading } from 'components';
 import { EngineType } from 'enums';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from 'stores';
 import { Feature } from 'types/feature';
@@ -44,14 +43,36 @@ export const Main = () => {
   const [engineType, setEngineType] = useState<EngineType[]>([]);
   const [priceRange, setPriceRange] = useState<number[]>([200, 5000]);
   const [accelerationRange, setAccelerationRange] = useState<number[]>([1, 20]);
+  const [params, setParams] = useState({
+    minPrice: 200,
+    maxPrice: 5000,
+    minAcceleration: 1,
+    maxAcceleration: 20,
+  });
 
-  const { isInitialLoading, data } = useQuery<Car[], ApiError>(['cars'], () =>
-    connectApi({ endpoint: 'cars' })
-  );
+  const { data } = useQuery<Car[], ApiError>(['cars', params], (data) => {
+    const x = data.queryKey[1] as typeof params;
+
+    return connectApi({
+      endpoint: `cars?minPrice=${x.minPrice}&maxPrice=${x.maxPrice}&minAcceleration=${x.minAcceleration}&maxAcceleration=${x.maxAcceleration}`,
+    });
+  });
 
   const { data: features } = useQuery<Feature[], ApiError>(['features'], () =>
     connectApi({ endpoint: 'cars-feature' })
   );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setParams({
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
+        minAcceleration: accelerationRange[0],
+        maxAcceleration: accelerationRange[1],
+      });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [priceRange, feature, engineType, accelerationRange]);
 
   const handleChangePrice = (_event: Event, newValue: number | number[]) => {
     setPriceRange(newValue as number[]);
@@ -81,10 +102,6 @@ export const Main = () => {
     } = event;
     setFeature(typeof value === 'string' ? value.split(',') : value);
   };
-
-  if (isInitialLoading) {
-    return <Loading />;
-  }
 
   const cars = data ?? [];
 
@@ -123,8 +140,19 @@ export const Main = () => {
     );
   });
 
-  const content =
-    carsOutput.length > 0 ? carsOutput : 'No car has been added yet.';
+  const content = (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 3,
+      }}
+    >
+      {carsOutput.length > 0 ? carsOutput : 'Can not find any car.'}
+    </Box>
+  );
 
   return (
     <Box
@@ -149,7 +177,7 @@ export const Main = () => {
       >
         <Box sx={{ width: 150 }}>
           <Typography id="input-slider" gutterBottom>
-            Price range
+            Price
           </Typography>
           <Slider
             value={priceRange}
@@ -221,17 +249,7 @@ export const Main = () => {
           />
         </Box>
       </Paper>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: 3,
-        }}
-      >
-        {content}
-      </Box>
+      {content}
     </Box>
   );
 };
