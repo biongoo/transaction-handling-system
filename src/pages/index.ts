@@ -8,6 +8,7 @@ export * from './ManageCarsEdit';
 export * from './Orders';
 export * from './Payment';
 export * from './Rent';
+export * from './Settings';
 export * from './SignUp';
 export * from './Users';
 export * from './UsersAdd';

@@ -32,6 +32,10 @@ const userItems = [
     name: 'Orders',
     url: '/orders',
   },
+  {
+    name: 'Settings',
+    url: '/settings',
+  },
 ];
 
 const adminItems = [

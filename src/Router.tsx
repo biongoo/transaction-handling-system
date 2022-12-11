@@ -10,6 +10,7 @@ import {
   Orders,
   Payment,
   Rent,
+  Settings,
   SignUp,
   Users,
   UsersAdd,
@@ -154,6 +155,14 @@ export const router = createBrowserRouter([
             element: <Orders />,
           },
         ],
+      },
+      {
+        path: 'settings',
+        element: (
+          <AuthProvider shouldBeLoggedIn={true}>
+            <Settings />
+          </AuthProvider>
+        ),
       },
     ],
   },

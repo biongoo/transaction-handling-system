@@ -63,7 +63,10 @@ export const Orders = () => {
         showAlert({
           title: 'Success',
           variant: 'success',
-          body: 'Order deleted successfully!',
+          body:
+            user?.role === UserRole.user
+              ? 'Order canceled successfully! Contact us to get a refund.'
+              : 'Order canceled successfully!',
         });
         queryClient.invalidateQueries({ queryKey: ['order'] });
       },
@@ -152,37 +155,19 @@ export const Orders = () => {
               <TableCell>End Date</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Is paid</TableCell>
-              {user?.role === UserRole.user ? null : <TableCell></TableCell>}
+              <TableCell>Cancel</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map((row, i) => (
-              <TableRow
-                key={row._id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {i + 1}
-                </TableCell>
-                <TableCell>{row.name}</TableCell>
-                {user?.role === UserRole.user ? null : (
-                  <TableCell>{row.email}</TableCell>
-                )}
-                {user?.role === UserRole.user ? null : (
-                  <TableCell>{row.phone}</TableCell>
-                )}
-                <TableCell>{row.car.name}</TableCell>
-                <TableCell>
-                  {new Date(row.startDate).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(row.endDate).toLocaleDateString()}
-                </TableCell>
-                <TableCell>{row.payment.value} PLN</TableCell>
-                <TableCell>
-                  {row.payment.status === 'paid' ? (
-                    'Yes'
-                  ) : // eslint-disable-next-line unicorn/no-nested-ternary
+            {orders.map((row, i) => {
+              let isPaid: JSX.Element | string;
+
+              if (row.payment.status === 'paid') {
+                isPaid = 'Yes';
+              } else if (row.payment.status === 'canceled') {
+                isPaid = 'Canceled';
+              } else {
+                isPaid =
                   user?.role === UserRole.user ? (
                     <LinkMui
                       component={Link}
@@ -203,33 +188,59 @@ export const Orders = () => {
                     >
                       Set as paid
                     </LinkMui>
-                  )}
-                </TableCell>
-                {user?.role === UserRole.user ? null : (
-                  <TableCell>
-                    <IconButton
-                      onClick={() =>
-                        setDeleteModal({
-                          open: true,
-                          name: `order with id ${i + 1}`,
-                          _id: row._id,
-                        })
-                      }
-                    >
-                      <Delete />
-                    </IconButton>
+                  );
+              }
+
+              return (
+                <TableRow
+                  key={row._id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {i + 1}
                   </TableCell>
-                )}
-              </TableRow>
-            ))}
+                  <TableCell>{row.name}</TableCell>
+                  {user?.role === UserRole.user ? null : (
+                    <TableCell>{row.email}</TableCell>
+                  )}
+                  {user?.role === UserRole.user ? null : (
+                    <TableCell>{row.phone}</TableCell>
+                  )}
+                  <TableCell>{row.car.name}</TableCell>
+                  <TableCell>
+                    {new Date(row.startDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(row.endDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>{row.payment.value} PLN</TableCell>
+                  <TableCell>{isPaid}</TableCell>
+                  <TableCell>
+                    {row.payment.status === 'canceled' ? null : (
+                      <IconButton
+                        onClick={() =>
+                          setDeleteModal({
+                            open: true,
+                            name: `order with id ${i + 1}`,
+                            _id: row._id,
+                          })
+                        }
+                      >
+                        <Delete />
+                      </IconButton>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
       <Dialog open={deleteModal.open} onClose={handleCloseDelete}>
-        <DialogTitle>Delete car</DialogTitle>
+        <DialogTitle>Cancel order</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete {deleteModal.name}?
+            Are you sure you want to cancel {deleteModal.name}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
