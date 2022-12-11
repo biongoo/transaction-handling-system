@@ -173,6 +173,7 @@ export const ManageCarsAdd = () => {
   const onSubmit = (data: Inputs) => {
     if (Number.isNaN(+data.acceleration)) {
       setError('acceleration', {});
+      return;
     }
 
     mutation.mutate({
