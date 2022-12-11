@@ -80,8 +80,11 @@ export const Orders = () => {
   const paidOrder = useMutation<unknown, ApiError, { _id: string }>(
     (data) =>
       connectApi({
-        endpoint: `order/${data._id}`,
+        endpoint: `payment/set-as-paid`,
         method: 'POST',
+        reqData: {
+          paymentId: data._id,
+        },
       }),
     {
       onMutate: () => {
@@ -189,11 +192,12 @@ export const Orders = () => {
                     </LinkMui>
                   ) : (
                     <LinkMui
+                      component="button"
                       onClick={() =>
                         setPaidModal({
                           open: true,
                           name: `order with id ${i + 1}`,
-                          _id: row._id,
+                          _id: row.payment._id,
                         })
                       }
                     >
