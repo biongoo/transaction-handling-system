@@ -43,18 +43,34 @@ export const Main = () => {
   const [engineType, setEngineType] = useState<EngineType[]>([]);
   const [priceRange, setPriceRange] = useState<number[]>([200, 5000]);
   const [accelerationRange, setAccelerationRange] = useState<number[]>([1, 20]);
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<{
+    minPrice: number;
+    maxPrice: number;
+    minAcceleration: number;
+    maxAcceleration: number;
+    features: string[];
+    engineTypes: EngineType[];
+  }>({
     minPrice: 200,
     maxPrice: 5000,
     minAcceleration: 1,
     maxAcceleration: 20,
+    features: [],
+    engineTypes: [],
   });
 
   const { data } = useQuery<Car[], ApiError>(['cars', params], (data) => {
     const x = data.queryKey[1] as typeof params;
+    const features =
+      x.features.length > 0 ? `&features=${JSON.stringify(x.features)}` : '';
+
+    const engineTypes =
+      x.engineTypes.length > 0
+        ? `&engineType=${JSON.stringify(x.engineTypes)}`
+        : '';
 
     return connectApi({
-      endpoint: `cars?minPrice=${x.minPrice}&maxPrice=${x.maxPrice}&minAcceleration=${x.minAcceleration}&maxAcceleration=${x.maxAcceleration}`,
+      endpoint: `cars?minPrice=${x.minPrice}&maxPrice=${x.maxPrice}&minAcceleration=${x.minAcceleration}&maxAcceleration=${x.maxAcceleration}${features}${engineTypes}`,
     });
   });
 
@@ -69,6 +85,8 @@ export const Main = () => {
         maxPrice: priceRange[1],
         minAcceleration: accelerationRange[0],
         maxAcceleration: accelerationRange[1],
+        features: feature,
+        engineTypes: engineType,
       });
     }, 500);
     return () => clearTimeout(timer);
