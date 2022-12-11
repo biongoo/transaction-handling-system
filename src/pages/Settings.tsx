@@ -16,6 +16,7 @@ export const Settings = () => {
   const navigate = useNavigate();
   const user = useAuthStore((x) => x.user);
   const logOut = useAuthStore((x) => x.logOut);
+  const setEmail = useAuthStore((x) => x.setEmail);
   const { control, handleSubmit } = useForm<Inputs>();
   const showAlert = useUiStore((state) => state.showAlert);
   const hideAlert = useUiStore((state) => state.hideAlert);
@@ -36,12 +37,13 @@ export const Settings = () => {
       onMutate: () => {
         hideAlert();
       },
-      onSuccess: () => {
+      onSuccess: (_x, y) => {
         showAlert({
           title: 'Success',
           variant: 'success',
           body: 'Account edited successfully!',
         });
+        setEmail(y.email);
         navigate(`/`);
       },
       onError: (e) => {
